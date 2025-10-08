@@ -1,1 +1,1 @@
-# Online Auction System by Nguyen Ngoc Hai
+# Online Auction App frontend by Nguyen Ngoc Hai
