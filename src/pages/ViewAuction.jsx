@@ -1,22 +1,77 @@
-import { useRef } from "react";
-import { useParams, Link } from "react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { placeBid, viewAuction } from "../api/auction.js";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router";
+import io from "socket.io-client";
+import { placeBid } from "../api/auction.js";
 import LoadingScreen from "../components/LoadingScreen.jsx";
+
+const socket = io(`${import.meta.env.VITE_API}/auctions`);
+
+const VITE_AUCTION_API = import.meta.env.VITE_AUCTION_API;
 
 export const ViewAuction = () => {
   const { id } = useParams();
   const { user } = useSelector((state) => state.auth);
   const queryClient = useQueryClient();
   const inputRef = useRef();
+  const [data, setData] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["viewAuctions", id],
-    queryFn: () => viewAuction(id),
-    staleTime: 30 * 1000,
-    placeholderData: () => undefined,
-  });
+  // const { data: initialData, isLoading } = useQuery({
+  //   queryKey: ["viewAuctions", id],
+  //   queryFn: () => viewAuction(id),
+  //   staleTime: 30 * 1000,
+  //   placeholderData: () => undefined,
+  // });
+
+  useEffect(() => {
+    const fetchAuctionData = async () => {
+      try {
+        setIsLoading(true);
+        const res = await fetch(`${VITE_AUCTION_API}/${id}`, {
+          method: "GET",
+          credentials: "include",
+        });
+        setIsLoading(false);
+
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const json = await res.json();
+        setData(json);
+      } catch (error) {
+        console.log("Error on getting auction data", error.message);
+      }
+    };
+
+    fetchAuctionData();
+  }, []);
+
+  // Update auction in real-time using WebSocket
+  useEffect(() => {
+    socket.emit("joinAuction", id);
+
+    socket.on("connect", (initialData) => {
+      console.log("Connected to Auction Server");
+      // setData(initialData);
+    });
+
+    socket.on("auction_updated", (data) => {
+      // console.log(`New bid: ${JSON.stringify(data)}`);
+      setData(data);
+    });
+
+    socket.on("bid_error", (error) => {
+      alert(`Bid Error: ${error.message}`);
+    });
+
+    return () => {
+      socket.emit("leaveAuction", id);
+      socket.off("auction_updated");
+      socket.off("connect");
+      socket.off("bid_error");
+    };
+  }, [id, queryClient]);
 
   const placeBidMutate = useMutation({
     mutationFn: ({ bidAmount, id }) => placeBid({ bidAmount, id }),
@@ -28,8 +83,7 @@ export const ViewAuction = () => {
       console.log("Error: ", error.message);
     },
   });
-
-  if (isLoading) return <LoadingScreen />;
+  if (isLoading || !data) return <LoadingScreen />;
 
   const handleBidSubmit = (e) => {
     e.preventDefault();
