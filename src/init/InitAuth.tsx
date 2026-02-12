@@ -1,11 +1,12 @@
-import { useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuth } from "../store/auth/authSlice";
 import LoadingScreen from "../components/LoadingScreen";
+import type { RootState, AppDispatch } from "../store/store";
 
-const InitAuth = ({ children }) => {
-  const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.auth);
+const InitAuth = ({ children }: { children: ReactNode }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading } = useSelector((state: RootState) => state.auth);
   const didRun = useRef(false);
 
   useEffect(() => {

@@ -4,26 +4,27 @@ import { useSelector, useDispatch } from "react-redux";
 import { login } from "../store/auth/authSlice";
 import { Link } from "react-router";
 import LoadingScreen from "../components/LoadingScreen";
+import type { RootState, AppDispatch } from "../store/store";
 
 const Login = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { user, loading } = useSelector((state) => state.auth);
+  const { user, loading } = useSelector((state: RootState) => state.auth);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [isError, setIsError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await dispatch(login(formData)).unwrap();
       navigate("/");
     } catch (error) {
       console.log("Login Failed", error);
-      setIsError(error || "something went wrong");
+      setIsError((error as string) || "something went wrong");
       setTimeout(() => {
         setIsError("");
       }, 10000);

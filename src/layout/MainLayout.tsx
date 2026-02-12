@@ -5,9 +5,10 @@ import LoadingScreen from "../components/LoadingScreen";
 import ScrollToTop from "../utils/ScrollToTop";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import type { RootState } from "../store/store";
 
 export const MainLayout = () => {
-  const { user, loading } = useSelector((state) => state.auth);
+  const { user, loading } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
 
   useEffect(() => {

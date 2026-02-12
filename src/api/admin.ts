@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 const VITE_API = import.meta.env.VITE_API;
 
 // Get admin dashboard statistics
@@ -9,7 +9,8 @@ export const getAdminDashboard = async () => {
         );
         return res.data;
     } catch (error) {
-        console.log(error?.response?.data?.error || "Can't load admin dashboard");
+        const err = error as AxiosError<{ error?: string }>;
+        console.log(err.response?.data?.error || "Can't load admin dashboard");
         throw error;
     }
 };
@@ -23,13 +24,14 @@ export const getAllUsers = async (page = 1, search = '', role = 'all', limit = 1
         });
         return res.data;
     } catch (error) {
-        console.log(error?.response?.data?.error || "Can't load users");
+        const err = error as AxiosError<{ error?: string }>;
+        console.log(err.response?.data?.error || "Can't load users");
         throw error;
     }
 };
 
 // Update user role (future functionality)
-export const updateUserRole = async (userId, newRole) => {
+export const updateUserRole = async (userId: string, newRole: string) => {
     try {
         const res = await axios.patch(`${VITE_API}/admin/users/${userId}/role`,
             { role: newRole },
@@ -37,26 +39,28 @@ export const updateUserRole = async (userId, newRole) => {
         );
         return res.data;
     } catch (error) {
-        console.log(error?.response?.data?.error || "Can't update user role");
+        const err = error as AxiosError<{ error?: string }>;
+        console.log(err.response?.data?.error || "Can't update user role");
         throw error;
     }
 };
 
 // Delete user (future functionality)
-export const deleteUser = async (userId) => {
+export const deleteUser = async (userId: string) => {
     try {
         const res = await axios.delete(`${VITE_API}/admin/users/${userId}`,
             { withCredentials: true }
         );
         return res.data;
     } catch (error) {
-        console.log(error?.response?.data?.error || "Can't delete user");
+        const err = error as AxiosError<{ error?: string }>;
+        console.log(err.response?.data?.error || "Can't delete user");
         throw error;
     }
 };
 
 // Block/Unblock user (future functionality)
-export const toggleUserStatus = async (userId, status) => {
+export const toggleUserStatus = async (userId: string, status: string) => {
     try {
         const res = await axios.patch(`${VITE_API}/admin/users/${userId}/status`,
             { status },
@@ -64,7 +68,8 @@ export const toggleUserStatus = async (userId, status) => {
         );
         return res.data;
     } catch (error) {
-        console.log(error?.response?.data?.error || "Can't update user status");
+        const err = error as AxiosError<{ error?: string }>;
+        console.log(err.response?.data?.error || "Can't update user status");
         throw error;
     }
 };

@@ -1,9 +1,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 const VITE_API = import.meta.env.VITE_API;
 
+interface AuctionState {
+    auctions: any[] | null;
+    loading: boolean;
+    error: string | null;
+    userData: any | null;
+    userProducts: any[];
+    auctionById: any[];
+}
 
-const initialState = {
+const initialState: AuctionState = {
     auctions: null,
     loading: false,
     error: null,
@@ -24,14 +32,15 @@ export const fetchAuctions = createAsyncThunk(
             const response = await axios.get(`${VITE_API}/api/auction/show`);
             return response.data;
         } catch (error) {
-            return rejectWithValue(error.response.data);
+            const err = error as AxiosError<any>;
+            return rejectWithValue(err.response?.data);
         }
     }
 );
 
 export const fetchUserAndProducts = createAsyncThunk(
     'auctions/fetchUserAndProducts',
-    async (userId, { rejectWithValue }) => {
+    async (userId: string, { rejectWithValue }) => {
         try {
             const token = localStorage.getItem('token');
             if (token) {
@@ -40,14 +49,15 @@ export const fetchUserAndProducts = createAsyncThunk(
             const response = await axios.get(`${VITE_API}/api/${userId}`);
             return response.data;
         } catch (error) {
-            return rejectWithValue(error.response?.data || "An unexpected error occurred.");
+            const err = error as AxiosError<any>;
+            return rejectWithValue(err.response?.data?.message || "An unexpected error occurred.");
         }
     }
 );
 
 export const fetchAuctionById = createAsyncThunk(
     'auctions/fetchAuctionById',
-    async (productId, { rejectWithValue }) => {
+    async (productId: string, { rejectWithValue }) => {
         try {
             const token = localStorage.getItem('token');
             if (token) {
@@ -56,7 +66,8 @@ export const fetchAuctionById = createAsyncThunk(
             const response = await axios.get(`${VITE_API}/api/auction/${productId}`);
             return response.data;
         } catch (error) {
-            return rejectWithValue(error.response?.data || "An unexpected error occurred.");
+            const err = error as AxiosError<any>;
+            return rejectWithValue(err.response?.data?.message || "An unexpected error occurred.");
         }
     }
 );
@@ -77,7 +88,7 @@ const auctionSlice = createSlice({
             })
             .addCase(fetchAuctions.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                state.error = action.payload as string;
             })
 
             // cases for fetchUserAndProducts
@@ -92,7 +103,7 @@ const auctionSlice = createSlice({
             })
             .addCase(fetchUserAndProducts.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                state.error = action.payload as string;
             })
             // Single ID
             .addCase(fetchAuctionById.pending, (state) => {
@@ -105,7 +116,7 @@ const auctionSlice = createSlice({
             })
             .addCase(fetchAuctionById.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                state.error = action.payload as string;
             });
 
     },

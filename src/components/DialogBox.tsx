@@ -1,7 +1,6 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
 
-const DialogBox = ({ onConfirm, onCancel }) => {
+const DialogBox = ({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) => {
   const [confirming, setConfirming] = useState(false);
 
   const handleConfirm = () => {

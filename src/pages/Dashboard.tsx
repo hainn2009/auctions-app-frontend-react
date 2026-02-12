@@ -1,8 +1,8 @@
-import AuctionCard from "../components/AuctionCard.jsx";
+import AuctionCard from "../components/AuctionCard";
 import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import { dashboardStats } from "../api/auction.js";
-import LoadingScreen from "../components/LoadingScreen.jsx";
+import { dashboardStats } from "../api/auction";
+import LoadingScreen from "../components/LoadingScreen";
 
 const Dashboard = () => {
   const { data, isLoading } = useQuery({
@@ -62,7 +62,7 @@ const Dashboard = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-4">
-              {data.latestAuctions.map((auction) => (
+              {data.latestAuctions.map((auction: any) => (
                 <AuctionCard key={auction._id} auction={auction} />
               ))}
             </div>
@@ -94,7 +94,7 @@ const Dashboard = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-4">
-              {data.latestUserAuctions.map((auction) => (
+              {data.latestUserAuctions.map((auction: any) => (
                 <AuctionCard key={auction._id} auction={auction} />
               ))}
             </div>

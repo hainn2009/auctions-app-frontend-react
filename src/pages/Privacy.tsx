@@ -34,7 +34,7 @@ export default function Privacy() {
 
           {data && (
             <div className="flex flex-col gap-4">
-              {data.map((entry) => (
+              {data.map((entry: any) => (
                 <div
                   key={entry.id}
                   className="rounded-sm border border-gray-200 bg-white p-4 shadow-sm"

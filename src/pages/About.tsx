@@ -1,9 +1,10 @@
 import { Link } from "react-router";
 // import { AdsComponent } from "../components/AdsComponent";
 import { useSelector } from "react-redux";
+import type { RootState } from "../store/store";
 
 export const About = () => {
-  const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-5xl mx-auto px-4 py-12">

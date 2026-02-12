@@ -19,12 +19,13 @@ import { RiAuctionLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router";
 import { logout } from "../store/auth/authSlice";
+import type { RootState, AppDispatch } from "../store/store";
 
 export const Navbar = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   console.log("user", user);
 
   // User logout
@@ -325,7 +326,7 @@ const adminNavLink = [
 ];
 
 // Helper function to get navigation links based on user role
-const getNavLinks = (userRole) => {
+const getNavLinks = (userRole: string) => {
   if (userRole === "admin") {
     return adminNavLink;
   }

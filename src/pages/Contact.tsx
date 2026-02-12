@@ -24,7 +24,7 @@ export const Contact = () => {
       });
       setSubmitted(true);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       setIsError(error?.response?.data?.error || "something went wrong");
       setTimeout(() => {
         setIsError("");
@@ -32,14 +32,14 @@ export const Contact = () => {
     },
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutate(formData);
+    mutate();
   };
 
   return (

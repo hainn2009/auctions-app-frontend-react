@@ -4,10 +4,10 @@ import LoadingScreen from '../../components/LoadingScreen';
 import { getAllUsers } from '../../api/admin';
 
 export const UsersList = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [pagination, setPagination] = useState({});
+  const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<any>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('createdAt');
@@ -33,12 +33,12 @@ export const UsersList = () => {
     fetchUsers(currentPage, searchTerm, sortBy, sortOrder);
   }, [currentPage, searchTerm, sortBy, sortOrder]);
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
   };
 
-  const handleSort = (field) => {
+  const handleSort = (field: string) => {
     if (sortBy === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
@@ -48,7 +48,7 @@ export const UsersList = () => {
     setCurrentPage(1);
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     if (!dateString) return 'Never';
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -59,7 +59,7 @@ export const UsersList = () => {
     });
   };
 
-  const formatLocation = (location) => {
+  const formatLocation = (location: any) => {
     if (!location) return 'Unknown';
     const parts = [];
     if (location.city) parts.push(location.city);
@@ -68,7 +68,7 @@ export const UsersList = () => {
     return parts.length > 0 ? parts.join(', ') : 'Unknown';
   };
 
-  const getSortIcon = (field) => {
+  const getSortIcon = (field: string) => {
     if (sortBy !== field) {
       return (
         <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,7 +191,7 @@ export const UsersList = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {users.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                       No users found matching your criteria.
                     </td>
                   </tr>

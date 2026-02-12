@@ -3,8 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router";
 import io from "socket.io-client";
-import { placeBid } from "../api/auction.js";
-import LoadingScreen from "../components/LoadingScreen.jsx";
+import { placeBid } from "../api/auction";
+import LoadingScreen from "../components/LoadingScreen";
+import type { RootState } from "../store/store";
 
 const socket = io(`${import.meta.env.VITE_API}/auctions`);
 
@@ -12,10 +13,10 @@ const VITE_AUCTION_API = import.meta.env.VITE_AUCTION_API;
 
 export const ViewAuction = () => {
   const { id } = useParams();
-  const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   const queryClient = useQueryClient();
-  const inputRef = useRef();
-  const [data, setData] = useState();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // const { data: initialData, isLoading } = useQuery({
@@ -40,7 +41,7 @@ export const ViewAuction = () => {
         const json = await res.json();
         setData(json);
       } catch (error) {
-        console.log("Error on getting auction data", error.message);
+        console.log("Error on getting auction data", (error as Error).message);
       }
     };
 
@@ -51,9 +52,8 @@ export const ViewAuction = () => {
   useEffect(() => {
     socket.emit("joinAuction", id);
 
-    socket.on("connect", (initialData) => {
+    socket.on("connect", () => {
       console.log("Connected to Auction Server");
-      // setData(initialData);
     });
 
     socket.on("auction_updated", (data) => {
@@ -74,27 +74,28 @@ export const ViewAuction = () => {
   }, [id, queryClient]);
 
   const placeBidMutate = useMutation({
-    mutationFn: ({ bidAmount, id }) => placeBid({ bidAmount, id }),
+    mutationFn: ({ bidAmount, id }: { bidAmount: number; id: string }) => placeBid({ bidAmount, id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["viewAuctions"] });
       if (inputRef.current) inputRef.current.value = "";
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.log("Error: ", error.message);
     },
   });
   if (isLoading || !data) return <LoadingScreen />;
 
-  const handleBidSubmit = (e) => {
+  const handleBidSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let bidAmount = e.target.bidAmount.value.trim();
-    placeBidMutate.mutate({ bidAmount, id });
+    const target = e.target as HTMLFormElement;
+    let bidAmount = target.bidAmount.value.trim();
+    placeBidMutate.mutate({ bidAmount, id: id! });
   };
 
   const daysLeft = Math.ceil(
-    Math.max(0, new Date(data.itemEndDate) - new Date()) / (1000 * 60 * 60 * 24)
+    Math.max(0, new Date(data.itemEndDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
   );
-  const isActive = Math.max(0, new Date(data.itemEndDate) - new Date()) > 0;
+  const isActive = new Date(data.itemEndDate).getTime() - Date.now() > 0;
 
   return (
     <div className="min-h-screen bg-gray-50  mx-auto container">
@@ -174,7 +175,7 @@ export const ViewAuction = () => {
             </div>
 
             {/* Bid Form */}
-            {data.seller._id != user.user._id && isActive && (
+            {data.seller._id != user?.user._id && isActive && (
               <div className="bg-white p-6 rounded-md shadow-md border border-gray-200">
                 <h3 className="text-lg font-semibold mb-4">Place Your Bid</h3>
                 <form onSubmit={handleBidSubmit} className="space-y-4">
@@ -226,7 +227,7 @@ export const ViewAuction = () => {
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
-                {data.bids.map((bid, index) => (
+                {data.bids.map((bid: any, index: number) => (
                   <div
                     key={index}
                     className="p-4 flex justify-between items-center"

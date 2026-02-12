@@ -1,15 +1,23 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createAuction } from "../api/auction.js";
+import { createAuction } from "../api/auction";
 import { useRef } from "react";
 import { useNavigate } from "react-router";
 
 export const CreateAuction = () => {
-  const fileInputRef = useRef();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [error, setError] = useState("");
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    itemName: string;
+    itemDescription: string;
+    itemCategory: string;
+    startingPrice: string;
+    itemStartDate: string;
+    itemEndDate: string;
+    itemPhoto: string | File;
+  }>({
     itemName: "",
     itemDescription: "",
     itemCategory: "",
@@ -39,7 +47,7 @@ export const CreateAuction = () => {
 
       navigate(`/auction/${data.newAuction._id}`);
     },
-    onError: (error) =>
+    onError: (error: any) =>
       setError(error?.response?.data?.message || "Something went wrong"),
   });
 
@@ -59,7 +67,7 @@ export const CreateAuction = () => {
     "Other",
   ];
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -68,8 +76,8 @@ export const CreateAuction = () => {
     setError("");
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const fileSizeMB = file.size / (1024 * 1024);
 
@@ -90,7 +98,7 @@ export const CreateAuction = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.itemPhoto) {
       setError("Please upload an image.");
@@ -287,7 +295,7 @@ export const CreateAuction = () => {
                     <div className="mt-3">
                       <p className="text-sm text-gray-600 mb-2">Preview:</p>
                       <img
-                        src={URL.createObjectURL(formData.itemPhoto)}
+                        src={URL.createObjectURL(formData.itemPhoto as Blob)}
                         alt="Preview"
                         className="w-32 h-32 object-cover border border-gray-300 rounded-md"
                       />
@@ -295,7 +303,7 @@ export const CreateAuction = () => {
                         type="button"
                         onClick={() => {
                           setFormData((prev) => ({ ...prev, itemPhoto: "" }));
-                          fileInputRef.current.value = "";
+                          if (fileInputRef.current) fileInputRef.current.value = "";
                         }}
                         className="mt-2 text-sm text-red-600 hover:underline"
                       >

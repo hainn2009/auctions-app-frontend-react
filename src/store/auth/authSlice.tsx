@@ -14,10 +14,16 @@ interface SignupPayload {
     password: string;
 }
 
-interface User {
-    id: number;
+interface UserData {
+    _id: string;
     name: string;
     email: string;
+    role: string;
+    avatar?: string;
+}
+
+interface User {
+    user: UserData;
 }
 
 interface AuthState {

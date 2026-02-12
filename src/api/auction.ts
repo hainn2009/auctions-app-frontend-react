@@ -10,7 +10,7 @@ export const getAuctions = async () => {
         );
         return res.data;
     } catch (error) {
-        console.log("Error on getting auction data", error.message);
+        console.log("Error on getting auction data", (error as Error).message);
     }
 }
 
@@ -22,25 +22,25 @@ export const getMyAuctions = async () => {
         );
         return res.data;
     } catch (error) {
-        console.log("Error on getting my auction data", error.message);
+        console.log("Error on getting my auction data", (error as Error).message);
     }
 }
 
 
 // getting single auction using _id
-export const viewAuction = async (id) => {
+export const viewAuction = async (id: string) => {
     try {
         const res = await axios.get(`${VITE_AUCTION_API}/${id}`,
             { withCredentials: true }
         );
         return res.data;
     } catch (error) {
-        console.log("Error on getting auction data", error.message);
+        console.log("Error on getting auction data", (error as Error).message);
     }
 }
 
 // placing bid for auction
-export const placeBid = async ({ bidAmount, id }) => {
+export const placeBid = async ({ bidAmount, id }: { bidAmount: number; id: string }) => {
     try {
         const res = await axios.post(`${VITE_AUCTION_API}/${id}`,
             { bidAmount },
@@ -48,13 +48,13 @@ export const placeBid = async ({ bidAmount, id }) => {
         )
         return res.data;
     } catch (error) {
-        console.log("Error placing bid", error.message);
+        console.log("Error placing bid", (error as Error).message);
     }
 }
 
 
 // creating new auction
-export const createAuction = async (data) => {
+export const createAuction = async (data: any) => {
     try {
 
         const formData = new FormData();
@@ -77,7 +77,7 @@ export const createAuction = async (data) => {
         );
         return res.data;
     } catch (error) {
-        console.log("Error creating auction", error.message);
+        console.log("Error creating auction", (error as Error).message);
     }
 }
 
@@ -89,6 +89,6 @@ export const dashboardStats = async () => {
         );
         return res.data;
     } catch (error) {
-        console.log("Error on getting dashboard data", error.message);
+        console.log("Error on getting dashboard data", (error as Error).message);
     }
 }

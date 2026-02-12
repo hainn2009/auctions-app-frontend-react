@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 const VITE_API = import.meta.env.VITE_API;
 
-export const changePassword = async (formData) => {
+export const changePassword = async (formData: { currentPassword: string; newPassword: string; confirmPassword: string }) => {
     try {
         const res = await axios.patch(`${VITE_API}/user`,
             formData,
@@ -9,7 +9,8 @@ export const changePassword = async (formData) => {
         );
         return res.data;
     } catch (error) {
-        console.log(error?.response?.data?.error || "Can't update password")
+        const err = error as AxiosError<{ error?: string }>;
+        console.log(err.response?.data?.error || "Can't update password")
         throw error;
     }
 }
@@ -22,7 +23,8 @@ export const loginHistory = async () => {
         );
         return res.data;
     } catch (error) {
-        console.log(error?.response?.data?.error || "Can't show login history")
+        const err = error as AxiosError<{ error?: string }>;
+        console.log(err.response?.data?.error || "Can't show login history")
         throw error;
     }
 }

@@ -14,14 +14,14 @@ export const AuctionList = () => {
 
   if (isLoading) return <LoadingScreen />;
 
-  const categories = [
+  const categories: string[] = [
     "all",
-    ...new Set(data?.map((auction) => auction.itemCategory)),
+    ...Array.from(new Set<string>((data ?? []).map((auction: any) => auction.itemCategory))),
   ];
   const filteredAuctions =
     filter === "all"
       ? data
-      : data?.filter((auction) => auction.itemCategory === filter);
+      : data?.filter((auction: any) => auction.itemCategory === filter);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -66,7 +66,7 @@ export const AuctionList = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4 place-items-center gap-6">
-            {filteredAuctions.map((auction) => (
+            {filteredAuctions.map((auction: any) => (
               <AuctionCard key={auction._id} auction={auction} />
             ))}
           </div>

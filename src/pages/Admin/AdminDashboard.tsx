@@ -5,10 +5,10 @@ import LoadingScreen from '../../components/LoadingScreen';
 import { getAdminDashboard, getAllUsers } from '../../api/admin';
 
 export const AdminDashboard = () => {
-  const [dashboardData, setDashboardData] = useState(null);
-  const [users, setUsers] = useState([]);
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch dashboard statistics
   const fetchDashboardData = async () => {
@@ -159,7 +159,7 @@ export const AdminDashboard = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-4">
-                {dashboardData.recentAuctions.map((auction) => (
+                {dashboardData.recentAuctions.map((auction: any) => (
                   <AuctionCard key={auction._id} auction={auction} />
                 ))}
               </div>

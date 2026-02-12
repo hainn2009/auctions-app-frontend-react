@@ -4,9 +4,10 @@ import { changePassword } from "../api/user";
 import { CiMail, CiUser, CiLock, CiCamera } from "react-icons/ci";
 import { useSelector } from "react-redux";
 import LoadingScreen from "../components/LoadingScreen";
+import type { RootState } from "../store/store";
 
 export default function Profile() {
-  const { user} = useSelector((state) => state.auth);
+  const { user} = useSelector((state: RootState) => state.auth);
   const [isError, setIsError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [formData, setFormData] = useState({
@@ -29,20 +30,20 @@ export default function Profile() {
         confirmPassword: "",
       });
     },
-    onError: (error) => {
-      setIsError(error?.response?.data?.error);
+    onError: (error: any) => {
+      setIsError(error?.response?.data?.error || "Something went wrong");
       setTimeout(() => {
         setIsError("");
       }, 10000);
     },
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const { currentPassword, newPassword, confirmPassword } = formData;
     if (!currentPassword || !newPassword || !confirmPassword) {
@@ -59,8 +60,10 @@ export default function Profile() {
       }, 10000);
       return;
     }
-    mutate(formData);
+    mutate();
   };
+
+  if (!user) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">

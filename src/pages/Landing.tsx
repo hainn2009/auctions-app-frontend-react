@@ -5,9 +5,10 @@ import { Hero } from "../components/Landing/Hero";
 import Dashboard from "./Dashboard";
 import LoadingScreen from "../components/LoadingScreen";
 import { Auction } from "../components/Landing/Auction";
+import type { RootState } from "../store/store";
 
 export const Landing = () => {
-  const { user, loading } = useSelector((state) => state.auth);
+  const { user, loading } = useSelector((state: RootState) => state.auth);
 
   if(loading) return <LoadingScreen/>
   
