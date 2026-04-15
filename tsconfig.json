@@ -8,8 +8,8 @@
         "allowSyntheticDefaultImports": true,
         "strict": true, // Can be enabled later (should be false in early stages of development)
         "forceConsistentCasingInFileNames": true,
-        "module": "ESNext",
-        "moduleResolution": "Node",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true, // Do not emit .js files when building
