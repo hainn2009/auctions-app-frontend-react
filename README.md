@@ -87,3 +87,14 @@ The Auction App is designed to simulate a real-world auction process with a focu
 -   **Cloud-native deployment:** Configurable via GKE ConfigMaps & Secrets for secure, flexible scaling.
 
 #### Current Working
+
+#### Dashboard Analytics
+
+- The dashboard now shows an AI analytics report from the backend.
+- The frontend still works if the analytics service is unavailable because the backend returns a fallback report.
+
+#### Environment
+
+Use `.env.example` for local setup.
+
+- `VITE_AUCTION_API` should point to your backend gateway auction route.
