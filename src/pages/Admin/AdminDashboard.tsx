@@ -3,10 +3,12 @@ import { Link } from 'react-router';
 import AuctionCard from '../../components/AuctionCard';
 import LoadingScreen from '../../components/LoadingScreen';
 import { getAdminDashboard, getAllUsers } from '../../api/admin';
+import { dashboardAnalyticsHealth } from '../../api/auction';
 
 export const AdminDashboard = () => {
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
+  const [aiHealth, setAiHealth] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,11 +18,18 @@ export const AdminDashboard = () => {
       const data = await getAdminDashboard();
       setDashboardData(data || {});
       setUsers(data.recentUsersList || []); // Set users from dashboard data
+      try {
+        const health = await dashboardAnalyticsHealth();
+        setAiHealth(health);
+      } catch {
+        setAiHealth({ status: 'unhealthy', fallbackMode: true });
+      }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       setError('Failed to load dashboard data');
       setDashboardData({});
       setUsers([]);
+      setAiHealth({ status: 'unhealthy', fallbackMode: true });
     }
   };
 
@@ -139,6 +148,23 @@ export const AdminDashboard = () => {
             </div>
           </div>
         )}
+
+        <div className="mb-8">
+          <div
+            className={`rounded-md border p-4 ${
+              aiHealth?.status === 'healthy'
+                ? 'bg-green-50 border-green-200 text-green-700'
+                : 'bg-yellow-50 border-yellow-200 text-yellow-800'
+            }`}
+          >
+            <div className="font-medium">AI Service Status</div>
+            <div className="text-sm mt-1">
+              {aiHealth?.status === 'healthy'
+                ? 'Healthy and serving report data.'
+                : 'Unavailable. Dashboard is using fallback analytics from backend.'}
+            </div>
+          </div>
+        </div>
 
         {/* Recent Active Auctions */}
         {dashboardData && (

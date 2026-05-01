@@ -1,6 +1,57 @@
 import axios from "axios";
 const VITE_AUCTION_API = import.meta.env.VITE_AUCTION_API;
 
+export interface DashboardStatsResponse {
+    totalAuctions: number;
+    userAuctionCount: number;
+    activeAuctions: number;
+    latestAuctions: any[];
+    latestUserAuctions: any[];
+}
+
+export interface AnalyticsCategoryReport {
+    itemCategory: string;
+    auctionCount: number;
+    totalBids: number;
+    averageBids: number;
+    averagePriceGrowth: number;
+    averagePriceGrowthPct: number;
+}
+
+export interface AnalyticsHotAuction {
+    auctionId: string;
+    itemName: string;
+    itemCategory: string;
+    bidCount: number;
+    priceGrowth: number;
+    priceGrowthPct: number;
+    bidVelocityPerMinute: number;
+}
+
+export interface DashboardAnalyticsReport {
+    generatedAt: string;
+    totalAuctions: number;
+    activeAuctions: number;
+    endedAuctions: number;
+    upcomingAuctions: number;
+    totalBids: number;
+    averageBidsPerAuction: number;
+    averageStartPrice: number;
+    averageCurrentPrice: number;
+    averagePriceGrowth: number;
+    averagePriceGrowthPct: number;
+    peakBidHour?: number | null;
+    topCategories: AnalyticsCategoryReport[];
+    hottestAuctions: AnalyticsHotAuction[];
+}
+
+export interface DashboardAnalyticsHealth {
+    aiServiceUrl: string;
+    status: "healthy" | "unhealthy";
+    fallbackMode: boolean;
+    latencyMs: number | null;
+}
+
 
 // getting list of all auction
 export const getAuctions = async () => {
@@ -82,7 +133,7 @@ export const createAuction = async (data: any) => {
 }
 
 // getting single auction using _id
-export const dashboardStats = async () => {
+export const dashboardStats = async (): Promise<DashboardStatsResponse> => {
     try {
         const res = await axios.get(`${VITE_AUCTION_API}/stats`,
             { withCredentials: true }
@@ -90,5 +141,35 @@ export const dashboardStats = async () => {
         return res.data;
     } catch (error) {
         console.log("Error on getting dashboard data", (error as Error).message);
+        throw error;
+    }
+}
+
+export const dashboardAnalytics = async (): Promise<DashboardAnalyticsReport> => {
+    try {
+        const res = await axios.get(`${VITE_AUCTION_API}/analytics`, {
+            withCredentials: true,
+        });
+        return res.data;
+    } catch (error) {
+        console.log("Error on getting analytics report", (error as Error).message);
+        throw error;
+    }
+}
+
+export const dashboardAnalyticsHealth = async (): Promise<DashboardAnalyticsHealth> => {
+    try {
+        const res = await axios.get(`${VITE_AUCTION_API}/analytics/health`, {
+            withCredentials: true,
+        });
+        return res.data;
+    } catch (error) {
+        console.log("Error on getting analytics health", (error as Error).message);
+        return {
+            aiServiceUrl: "unknown",
+            status: "unhealthy",
+            fallbackMode: true,
+            latencyMs: null,
+        };
     }
 }
